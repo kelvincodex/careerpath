@@ -12,24 +12,24 @@
             <form class="p-9" @submit.prevent="handleRegister">
               <div class="mb-5 flex justify-between">
                 <label class="font-bold text-sm self-center ">First Name:</label>
-                <input type="text" class="form-input" v-model="RegisterRequest.request.first_name">
+                <input required type="text" class="form-input" v-model="RegisterRequest.request.first_name">
               </div>
               <div class="mb-5 flex justify-between" >
                 <label class="font-bold text-sm self-center">Last Name:</label>
-                <input type="text" class="form-input" v-model="RegisterRequest.request.last_name">
+                <input required type="text" class="form-input" v-model="RegisterRequest.request.last_name">
               </div>
               <div class="mb-5 flex justify-between" >
                 <label class="font-bold text-sm self-center mr-2">Email Address:</label>
-                <input type="email" class="form-input" v-model="RegisterRequest.request.email">
+                <input required type="email" class="form-input" v-model="RegisterRequest.request.email">
               </div>
               <div class="mb-5 flex justify-between " >
                 <label class="font-bold text-sm self-center">Password:</label>
-                <input type="password" class="form-input" v-model="RegisterRequest.request.password">
+                <input required type="password" class="form-input" v-model="RegisterRequest.request.password">
               </div>
 
               <div class="mb-5 flex justify-between" >
                 <label class="font-bold text-sm self-center mr-2">Re-type Password:</label>
-                <input type="password" class="form-input" v-model="retype">
+                <input required type="password" class="form-input" v-model="retype">
               </div>
               <div class="w-full flex justify-center">
                 <button type="submit" class="bg-pink-600 p-2 px-4 text-white rounded">Submit</button>
