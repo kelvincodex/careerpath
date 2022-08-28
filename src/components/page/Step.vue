@@ -6,7 +6,7 @@
       <h2 class="text-3xl font-bold">Career Study</h2>
     </div>
     <div class="w-full bg-white shadow-xl p-9">
-      <div class="w-full h-auto border">
+      <div class="w-full h-auto">
         <div class="flex flex-col flex-shrink-0 items-center justify-center py-10">
           <div class="w-[80%]" >
             <div  v-for="option in career.allOptions" :key="option.id">
@@ -63,10 +63,13 @@ const career = useCareer()
         career.setAllOptions(career.next)
         career.prev++
         career.current++
-    career.steps.two = false
-    career.steps.three = true
+
     career.start = false
     career.end = false
+    if (career.next == 7){
+      career.steps.two = false
+      career.steps.three = true
+    }
     return 0
   }else if (career.next > career.allQuestions.total_questions){
       career.steps.two = false

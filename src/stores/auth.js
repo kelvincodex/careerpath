@@ -54,7 +54,7 @@ export const useAuth = defineStore('auth',{
                 RegisterResponse.response.email = response.data.email
                 RegisterResponse.response.first_name = response.data.first_name
                 RegisterResponse.response.last_name = response.data.last_name
-                router.push({ name: ActionUtil.route.page.home})
+                router.push({ name: ActionUtil.route.auth.login})
             }).catch((errors)=>{
                 console.log(errors.response)
                 sweetToast.fire({
