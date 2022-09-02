@@ -41,7 +41,7 @@ const items = ref()
 onMounted(()=>{
   career.setEvaluation()
   console.log(career.evaluate)
-  items.value = career.evaluate.response_msg.slice(0, 5)
+  items.value = career.evaluate.response_msg
 })
 const route = ()=>{
   career.steps.first = true

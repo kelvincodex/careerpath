@@ -36,7 +36,7 @@ const career = useCareer()
 const items = ref([])
 onMounted(()=>{
   career.setEvaluation()
-  items.value = career.evaluate.response_msg.slice(0, 5)
+  items.value = career.evaluate.response_msg
   console.log(career.evaluate)
 
 })

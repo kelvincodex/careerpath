@@ -26,11 +26,13 @@ export const useCareer = defineStore('career',{
             second: false,
             third: false,
             fourth: false,
-        }
+        },
+        isLoading: false
     }),
 
     actions: {
        async setAllQuestions(){
+           this.isLoading = true
            try{
                const response =  await  QuestionService.allQuestion();
                if (response){
@@ -38,24 +40,29 @@ export const useCareer = defineStore('career',{
                    await this.setAllOptions()
                    await this.getFetchAnswers()
                }
+               this.isLoading = false
            }catch (error){
                console.log(error)
                NetworkErrorMessage(error.message)
+               this.isLoading = false
            }
         },
         async setSelectedOption(payload = SelectedOptionRequest.request){
+            this.isLoading = true
                 try{
                     const response = await  QuestionService.selectedOption(payload)
                     if (response.status === 200){
                         this.active.push(payload.option_id)
                     }
-
+                    this.isLoading = false
                     console.log(response)
                 }catch (error){
+                    // console.log(error)
                     await sweetToast.fire({
                         icon: "error",
                         text: "something went wrong might be a Network error"
                     })
+                    this.isLoading = false
                 }
         },
         async setAllOptions(){
