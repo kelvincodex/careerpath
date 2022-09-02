@@ -15,7 +15,7 @@
       <div>
         <ul>
           <li class="text-[#5c5758] text-[16px] font-[700] mb-3">Use Cases</li>
-          <li class="text-[#5c5758] text-[14px] font-[400] hover:text-primary cursor-pointer">choose a path</li>
+          <li class="text-[#5c5758] text-[14px] font-[400] hover:text-primary cursor-pointer">Find your career path</li>
           <li class="text-[#5c5758] text-[14px] font-[400] hover:text-primary cursor-pointer">Careers</li>
         </ul>
       </div>

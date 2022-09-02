@@ -28,7 +28,7 @@
         <router-link :to="{name: ActionUtil.route.auth.register }"
                      class="rounded-md p-3.5 leading-[32px] text-[16px] font-[400] drop-shadow-2xl  transition- delay-150 duration-300  ease-in-out"
                      :class="[scroll.scroll === 0 ? 'bg-gray-500 hover:bg-[#fe4066]': 'bg-[#fe4066] text-white']">Get
-          Start
+          Started
         </router-link>
       </div>
       <div class="p-5" v-else>
