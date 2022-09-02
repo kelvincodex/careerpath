@@ -1,6 +1,18 @@
 <script setup>
 import {  RouterView } from 'vue-router'
+import {onMounted, onUpdated, ref, watch} from "vue";
+import {useScroll} from './stores/scroll'
+import {useCareer} from "./stores/career";
+const carreer = useCareer()
+
+const scroll = useScroll()
 document.title = __env.app.title
+
+window.addEventListener('scroll',()=>{
+     scroll.scroll = window.scrollY
+})
+
+
 </script>
 
 <template>
@@ -10,10 +22,12 @@ document.title = __env.app.title
 <style scoped>
 *{
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: "Poppins", "sans-serif";
   padding: 0;
   box-sizing: border-box;
-  @apply bg-gradient-to-bl from-pink-100 to-pink-200
+  background-color: #ffffff;
+  width: 100%;
+  height: 100%;
 }
 
 </style>

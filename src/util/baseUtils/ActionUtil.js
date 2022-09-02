@@ -7,8 +7,12 @@ export class ActionUtil{
         page: {
             home: "Home",
             about: "About",
-            step: "Step",
-            option: "OptionSteps",
+            contact: "Contact",
+            step: "Steps",
+            courses: "Courses",
+            evaluateSteps: "EvaluateSteps",
+            careerFields: "CareerFields",
+
         },
         pageNotFound: "PageNotFound"
 }

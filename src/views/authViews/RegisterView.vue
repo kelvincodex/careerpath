@@ -1,89 +1,84 @@
 <template>
-
-  <div class="w-full h-screen">
-    <nav-bar />
-    <div class="md:w-[70%] mx-auto  md:mt-20 ">
-      <div class=" bg-white  shadow-xl flex justify-center md:justify-end px-7">
-        <div class="self-center hidden md:block">
-          <img src="../../assets/register.gif" class="w-3/4" />
-        </div>
-          <div>
-          <h2 class="text-2xl font-bold text-center mt-10  mb-10">Register</h2>
-            <form class="p-9" @submit.prevent="handleRegister">
-              <div class="mb-5 flex justify-between">
-                <label class="font-bold text-sm self-center ">First Name:</label>
-                <input type="text" class="form-input" v-model="RegisterRequest.request.first_name">
-              </div>
-              <div class="mb-5 flex justify-between" >
-                <label class="font-bold text-sm self-center">Last Name:</label>
-                <input type="text" class="form-input" v-model="RegisterRequest.request.last_name">
-              </div>
-              <div class="mb-5 flex justify-between" >
-                <label class="font-bold text-sm self-center mr-2">Email Address:</label>
-                <input type="email" class="form-input" v-model="RegisterRequest.request.email">
-              </div>
-              <div class="mb-5 flex justify-between " >
-                <label class="font-bold text-sm self-center">Password:</label>
-                <input type="password" class="form-input" v-model="RegisterRequest.request.password">
-              </div>
-
-              <div class="mb-5 flex justify-between" >
-                <label class="font-bold text-sm self-center mr-2">Re-type Password:</label>
-                <input type="password" class="form-input" v-model="retype">
-              </div>
-              <div class="w-full flex justify-center">
-                <button type="submit" class="bg-pink-600 p-2 px-4 text-white rounded">Submit</button>
-              </div>
-            </form>
-          <p class="text-center mb-2">Already have an account? <router-link :to="{name: ActionUtil.route.auth.login}" class="text-blue-500">Sign in</router-link></p>
+  <div class="m-0 w-full h-[100vh] bg-white">
+    <div class="h-full flex flex-col justify-center items-center bg-black bg-opacity-70">
+      <div class="mb-5 mt-20">
+        <h2 class="text-white  font-[700]   text-[32px] md:text-[24px]">Register</h2>
+      </div>
+      <div class="bg-opacity-70 bg-white p-5 md:p-11 w-[90%] md:w-1/3 rounded drop-shadow mb-20 ">
+        <form @submit.prevent="handleRegister" class="flex flex-col">
+          <div class="mb-4">
+            <label class="text-[14px] md:text-[18px] font-[400]">First Name</label>
+            <input type="text" class="form-input w-full "  v-model="RegisterRequest.request.first_name" @focus="error.firstname = false" :class="[error.firstname ? 'border border-primary' : '']" />
+            <span v-if="error.firstname" class="text-primary text-[16px]">required!</span>
           </div>
-        </div>
+          <div class="mb-4">
+            <label class="text-[14px] md:text-[18px] font-[400]">Last Name</label>
+            <input type="text" class="form-input w-full" v-model="RegisterRequest.request.last_name"  @focus="error.lastname = false" :class="[error.lastname ? 'border border-primary' : '']" />
+            <span v-if="error.lastname" class="text-primary text-[16px]">required!</span>
+          </div>
+          <div class="mb-4">
+            <label class="text-[14px] md:text-[18px]  font-[400]">Email Address</label>
+            <input type="email" class="form-input w-full" v-model="RegisterRequest.request.email"  @focus="error.email = false" :class="[error.email ? 'border border-primary' : '']" />
+            <span v-if="error.email" class="text-primary text-[16px]">required!</span>
+          </div>
+          <div class="mb-4">
+            <label class="text-[14px] md:text-[18px]  font-[400]">Password</label>
+            <input type="password" class="form-input w-full" v-model="RegisterRequest.request.password"  @focus="error.password = false" :class="[error.password ? 'border border-primary' : '']" />
+            <span v-if="error.password" class="text-primary text-[16px]" >required!</span>
+          </div>
+          <div class="mb-4">
+            <label class="text-[14px] md:text-[18px] font-[400]">Retype-Password</label>
+            <input type="password" class="form-input w-full" v-model="error.passwordRR"  @focus="error.rePassword = false" :class="[error.rePassword ? 'border border-primary' : '']" />
+            <span v-if="error.rePassword" class="text-primary text-[16px]">password mismatch!</span>
+          </div>
+          <div class=" self-center p-3">
+              <button v-if="!auth.isLoading" type="submit" class="bg-primary p-2 rounded">Submit</button>
+             <Loader v-else />
+          </div>
+          <p>have an account? <router-link :to="{name: ActionUtil.route.auth.login}" class="hover:text-primary text-blue-700">sign in</router-link></p>
+        </form>
+      </div>
     </div>
   </div>
 </template>
 <script setup>
-import NavBar from "../../components/home/NavBar.vue";
+import Loader from "../../components/reuse/Loader.vue";
 import {ActionUtil} from "../../util/baseUtils/ActionUtil";
-import {RegisterRequest} from "../../model/request/RegisterRequest";
 import {reactive, ref} from "vue";
-import {sweetToast} from "../../util/mixin/sweet";
+import {ErrorsService} from "../../service/ErrorsService";
+import {RegisterRequest} from "../../model/request/RegisterRequest";
 import {useAuth} from "../../stores/auth";
-const authStore = useAuth()
-const retype = ref("")
+import {getRandomInt} from "../../util/mixin/random";
+import {sweetToast} from "../../util/mixin/sweet";
+const error = reactive({
+      firstname: false,
+      lastname: false,
+      email: false,
+      password: false,
+      rePassword: false,
+     passwordRR: ''
+})
+const auth = useAuth()
+const isLoading = ref(false)
 
 const handleRegister = ()=>{
-  console.log(RegisterRequest.request.email)
-  if (RegisterRequest.request.password !== retype.value){
-    sweetToast.fire({
-      icon: 'error',
-      title: "password does not match!!"
-    })
-    return 0
-  }else if (RegisterRequest.request.email === null){
-    sweetToast.fire({
-      icon: 'error',
-      title: "email is required!!!"
-    })
-    return 0
-  }else if(RegisterRequest.request.last_name === null){
-    sweetToast.fire({
-      icon: 'error',
-      title: "last_name is required!!"
-    })
-    return 0
-  }else if(RegisterRequest.request.first_name === null){
-    sweetToast.fire({
-      icon: 'error',
-      title: "first_name required!!"
-    })
-    return 0
-  }else {
-    const emailConst = RegisterRequest.request.email.split('@')
-    const random =  Math.ceil( 1000 + Math.random()  * 1000)
-    RegisterRequest.request.username = emailConst[0] + random
+     const er = ErrorsService.register(RegisterRequest, error)
 
-    authStore.register(RegisterRequest.request)
+    if(error.passwordRR !== RegisterRequest.request.password){
+      error.rePassword = true
+      return 0
   }
-}
+    if (er){
+      const username = RegisterRequest.request.email.split('@')
+      RegisterRequest.request.username = username[0] + getRandomInt(1, 5000)
+      auth.register(RegisterRequest.request)
+    }else {
+      sweetToast.fire({
+        icon: "error",
+        text: "Check Your Credential amd try again!!"
+      })
+    }
 
+
+}
 </script>

@@ -1,6 +1,6 @@
 export class LoginRequest{
     static request ={
-        email: "morah@gmail.com",
+        email: null,
         password: null
     }
 }

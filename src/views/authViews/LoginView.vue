@@ -1,40 +1,56 @@
 <template>
-  <div class="w-full h-screen">
-    <nav-bar />
-    <div class="md:w-[70%] mx-auto  mt-20 ">
-      <div class=" bg-white  shadow-xl flex justify-center md:justify-end">
-        <div class="self-center hidden md:block">
-          <img src="../../assets/login.gif" class="w-3/4" />
-        </div>
-        <div>
-          <h2 class="text-2xl font-bold text-center mt-10  mb-10">Login</h2>
-
-          <form class="p-9" @submit.prevent="authStore.login(LoginRequest.request)">
-            <div class="mb-5 flex justify-between" >
-              <label class="font-bold text-sm self-center mr-2">Email Address:</label>
-              <input type="email" class="form-input" v-model="LoginRequest.request.email">
-            </div>
-            <div class="mb-5 flex justify-between " >
-              <label class="font-bold text-sm self-center">Password:</label>
-              <input type="password" class="form-input" v-model="LoginRequest.request.password">
-            </div>
-            <div class="w-full flex justify-center">
-              <button type="submit" class="bg-pink-600 p-2 px-4 text-white rounded">Submit</button>
-            </div>
-          </form>
-          <p class="text-center mb-2">Don't have an account? <router-link :to="{name:ActionUtil.route.auth.register }" class="text-blue-500">Sign up</router-link></p>
-        </div>
+  <div class="m-0 w-full h-[100vh] bg-white">
+    <div class="h-full flex flex-col justify-center items-center  bg-black bg-opacity-70">
+      <div class="mb-5 mt-20">
+        <h2 class="text-white  font-[700]   text-[32px] md:text-[24px]">Login</h2>
       </div>
-
-
+      <div class="bg-opacity-70 bg-white p-5 md:p-11 w-[90%] md:w-1/3  rounded drop-shadow mb-20 ">
+        <form @submit.prevent="handle" class="flex flex-col">
+          <div class="mb-4">
+            <label class="text-[14px] md:text-[18px]  font-[400]">Email Address</label>
+            <input type="email" class="form-input w-full" v-model="LoginRequest.request.email"  @focus="error.email = false" :class="[error.email ? 'border border-primary' : '']" />
+            <span v-if="error.email" class="text-primary text-[16px]">required!</span>
+          </div>
+          <div class="mb-4">
+            <label class="text-[14px] md:text-[18px]  font-[400]">Password</label>
+            <input type="password" class="form-input w-full" v-model="LoginRequest.request.password" @focus="error.password = false" :class="[error.password ? 'border border-primary' : '']" />
+            <span v-if="error.password" class="text-primary text-[16px]" >required!</span>
+          </div>
+          <div class=" self-center p-3">
+            <button v-if="!auth.isLoading" type="submit" class="bg-primary p-2 rounded">Submit</button>
+            <Loader v-else />
+          </div>
+          <p>don't have an account? <router-link :to="{name: ActionUtil.route.auth.register}" class="hover:text-primary text-blue-700">sign up</router-link></p>
+        </form>
+      </div>
     </div>
   </div>
 </template>
 <script setup>
-import NavBar from "../../components/home/NavBar.vue";
-import {ActionUtil} from '../../util/baseUtils/ActionUtil'
+import {ActionUtil} from "../../util/baseUtils/ActionUtil";
+import {reactive} from "vue";
+import {LoginRequest} from "../../model/request/LoginRequest";
+import {ErrorsService} from "../../service/ErrorsService";
 import {useAuth} from "../../stores/auth";
-import {LoginRequest} from "../../model/request/LoginRequest"
-const authStore = useAuth()
+import Loader from "../../components/reuse/Loader.vue";
+import {sweetToast} from "../../util/mixin/sweet";
 
+const error = reactive({
+    email: false,
+    password: false,
+})
+const auth =useAuth()
+
+const handle = ()=>{
+   const err = ErrorsService.login(LoginRequest, error)
+    if(err === 1){
+        auth.login(LoginRequest.request)
+    }else {
+      sweetToast.fire({
+        icon: "error",
+        text: "Check Your Credential and try again!!"
+      })
+    }
+
+}
 </script>

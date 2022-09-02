@@ -6,8 +6,9 @@ import {RegisterService} from "../service/RegisterService";
 import {LoginResponse} from "../model/response/LoginResponse";
 import {sweetModal, sweetToast} from "../util/mixin/sweet";
 import {RegisterResponse} from "../model/response/RegisterResponse";
-import {useRouter} from "vue-router";
 import {ActionUtil} from "../util/baseUtils/ActionUtil";
+import router from "../router";
+import {NetworkErrorMessage} from "../util/messages/NetworkErrorMessage";
 
 
 export const useAuth = defineStore('auth',{
@@ -15,11 +16,8 @@ export const useAuth = defineStore('auth',{
         token: LoginResponse.response.auth_token,
         isLogin: false,
         isAuthorize: false,
-        email: RegisterResponse.response.email,
-        password: RegisterResponse.response.password,
-        firstname: RegisterResponse.response.first_name,
-        lastname: RegisterResponse.response.last_name,
-        username: RegisterResponse.response.username,
+        isLoading: false,
+        user: {}
     }),
     getters: {
         getToken: (state)=>state.token,
@@ -28,40 +26,73 @@ export const useAuth = defineStore('auth',{
     actions: {
         logout(){
             localStorage.clear();
-            location.assign('/');
+            // router.push({name: ActionUtil.route.page.home})
+            location.assign('/')
         },
-        login(payload = LoginRequest.request){
-            LoginService.login(payload).then((response)=>{
-                this.isLogin = true
-                this.token = response.data.auth_token
-                this.$router.push({ name: ActionUtil.route.page.home})
-                console.log(`hello its the auth ${LoginResponse.response.auth_token}`)
-            }).catch((errors)=>{
-                console.log(errors)
-                if (errors.response){
-                    sweetToast.fire({
-                        icon: 'error',
-                        html: `${Object.keys(errors.response.data)} ${Object.values(errors.response.data)}`,
+        async login(payload = LoginRequest.request){
+            this.isLoading = true
+            console.log(LoginRequest.request)
+            try{
+               const response = await LoginService.login(payload)
 
+                    this.isLoading = false
+                    this.isLogin = true
+                    this.isAuthorize = true
+                    this.token = response.data.auth_token
+
+                    await sweetModal.fire({
+                        icon: "success",
+                        title: "Successful",
+                        text: "You are logged in successfully!!!"
                     })
+                const user = await LoginService.user()
+                 this.user = user.data.response_msg
+                // console.log(this.user)
+                await router.push({name: ActionUtil.route.page.home})
+
+            }catch(errors){
+                this.isLoading = false
+                    console.log(errors.response)
+                        await sweetToast.fire({
+                            icon: 'error',
+                            title: `${errors.response.statusText}`,
+                            html: `${Object.values(errors.response.data)}`,
+                        })
+
+                         NetworkErrorMessage(errors.message)
+                    }},
+       async register(payload = RegisterRequest.request){
+                this.isLoading = true
+            try{
+                const response =await  RegisterService.register(payload)
+                this.isLoading = false
+                console.log(response+ "response")
+                if (response.status === 203) {
+                    await sweetModal.fire({
+                        icon: "error",
+                        title: "Something Went Wrong!!",
+                        text: `${response.data.response_msg}`
+                    })
+
+                    return 0
                 }
-            })
-        },
-        register(payload = RegisterRequest.request){
-            const router = useRouter()
-            RegisterService.register(payload).then((response)=>{
-                RegisterResponse.response.username = response.data.username
-                RegisterResponse.response.email = response.data.email
-                RegisterResponse.response.first_name = response.data.first_name
-                RegisterResponse.response.last_name = response.data.last_name
-                router.push({ name: ActionUtil.route.auth.login})
-            }).catch((errors)=>{
-                console.log(errors.response)
-                sweetToast.fire({
-                    icon: 'error',
-                    html: "Something Went Wrokng"
-                })
-            })
+                else {
+                    this.isLoading = false
+                    await sweetModal.fire({
+                        icon: "success",
+                        title: "successful",
+                        text: `${response.data.first_name} ${response.data.last_name} You Have Register Successfully proceed to Login`
+                    })
+
+                    await router.push({name: ActionUtil.route.auth.login})
+                }
+
+            }catch (errors) {
+                this.isLoading = false
+                NetworkErrorMessage(errors.message)
+            }
+
+
         }
     },
 })

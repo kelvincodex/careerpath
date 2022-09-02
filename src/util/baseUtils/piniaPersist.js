@@ -6,7 +6,7 @@ const pinia = createPinia()
 pinia.use((context)=>{
 
     const storeId = context.store.$id
-    console.log(pinia.state.value[storeId])
+    // console.log(pinia.state.value[storeId])
     const serializer = {
         serialize: JSON.stringify,
         deserialize: JSON.parse
@@ -14,7 +14,7 @@ pinia.use((context)=>{
 
     const fromJson = serializer.deserialize(localStorage.getItem(storeId))
     // console.log(storeId)
-    console.log(fromJson)
+    // console.log(fromJson)
     if (fromJson){
         context.store.$patch(fromJson)
     }

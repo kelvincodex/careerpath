@@ -14,4 +14,12 @@ export class QuestionService{
        return  AxiosService.client().post("/fetch_common_answers/")
     }
 
+    static fetchAnswers(){
+       return  AxiosService.client().post("/fetch_answers/")
+    }
+
+    static allInterest(){
+       return  AxiosService.client().post("/fetch_all_interests")
+    }
+
 }
